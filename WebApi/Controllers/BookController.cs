@@ -59,11 +59,11 @@ namespace WebApi.AddControllers
         public IActionResult AddBook([FromBody] Book newBook)
         {
             var book = BookList.SingleOrDefault(x => x.Title == newBook.Title);
-            if (book == null)
+            if (book is not null)
             {
                 return BadRequest();
             }
-            BookList.Add(newBook);
+            BookList.Add(book);
             return Ok();
         }
 
@@ -71,7 +71,7 @@ namespace WebApi.AddControllers
         public IActionResult UpdateBook(int id,[FromBody] Book updatedBook)
         {
             var book = BookList.SingleOrDefault(x=> x.Id == id);
-            if(book == null)
+            if(book is null)
             {
                 return BadRequest();
             }
@@ -82,6 +82,18 @@ namespace WebApi.AddControllers
 
             return Ok();
 
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteBook(int id)
+        {
+            var book = BookList.SingleOrDefault(x=> x.Id == id);
+            if(book is null)
+            {
+                return BadRequest();
+            }
+            BookList.Remove(book);
+            return Ok();
         }
     }
 }
