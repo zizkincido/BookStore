@@ -34,12 +34,12 @@ namespace WebApi.AddControllers
         };
 
 
-        /*[HttpGet]
+        [HttpGet]
         public List<Book> GetBooks()
         {
             var bookList = BookList.OrderBy(x=>x.Id).ToList<Book>();
             return bookList;
-        }*/
+        }
         
         [HttpGet("{id}")]
         public Book GetById(int id)
@@ -48,12 +48,23 @@ namespace WebApi.AddControllers
             return book;
         }
 
-        [HttpGet]
+        /*[HttpGet]
         public Book Get([FromQuery] string id)
         {
             var book = BookList.Where(book => book.Id == Convert.ToInt32(id)).SingleOrDefault();
             return book;
+        }*/
+        
+        [HttpPost]
+        public IActionResult AddBook([FromBody] Book newBook)
+        {
+            var book = BookList.SingleOrDefault(x=>x.Title == newBook.Title);
+            if(book is not null)
+                return BadRequest();
+            BookList.Add(newBook);
+            return Ok();
         }
+
     }
 }
 
