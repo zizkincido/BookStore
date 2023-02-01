@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.JsonPatch;
 namespace WebApi.AddControllers
+
 {
     [ApiController]
     [Route("[controller]s")]
@@ -31,6 +33,13 @@ namespace WebApi.AddControllers
                 PageCount = 540,
                 PublishDate = new DateTime(2001,12,21)
             },
+            new Book{
+                Id=4,
+                Title= "Lord of The Rings",
+                GenreId = 2,
+                PageCount = 1100,
+                PublishDate = new DateTime(2000,01,01)
+            }
         };
 
 
@@ -95,6 +104,25 @@ namespace WebApi.AddControllers
             BookList.Remove(book);
             return Ok();
         }
+
+        [HttpPatch("{id}")]
+    public IActionResult UpdateBookPartial(int id, [FromBody] JsonPatchDocument<Book> patchDoc)
+    {
+        var book = BookList.SingleOrDefault(x => x.Id == id);
+        if (book is null)
+        {
+        return BadRequest();
+        }
+
+        patchDoc.ApplyTo(book, ModelState);
+        if (!ModelState.IsValid)
+        {
+        return BadRequest(ModelState);
+        }
+
+        return Ok();
+}
+
     }
 }
     
